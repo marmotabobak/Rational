@@ -1,6 +1,3 @@
-class NotNatural(Exception):
-    pass
-
 def get_gcd(num1: int, num2: int) -> int:
     '''
     Функция поиска НОД по Эвклиду
@@ -50,37 +47,31 @@ class Rational:
     def __init__(self, num: int, den: int):
         '''
         :param num: числитель - целое число
-        :param den: знаменатель - натуральное число
+        :param den: знаменатель - целове число
         '''
 
         try:
-            # знаменатель - натуральное число
-            if int(den) <= 0:
-                # добавить обработчик исключения
-                raise NotNatural
-
             num = int(num)
-            # установка знака дроби
-            if num > 0:
-                self.sign = 1
-            elif num < 0:
-                self.sign = -1
-            else:
-                self.sign = 0
-
-            self.num, self.den = abs(num), abs(den)
-
-            # сокращение дроби
-            self.shorten()
-        except NotNatural:
-            # добавить обработчик исключения
-            raise
+            den = int(den)
+            if den == 0:
+                # добавить обработчик исключения
+                raise ZeroDivisionError
         except TypeError:
             # добавить обработчик исключения
-            raise
+            pass
         except ValueError:
             # добавить обработчик исключения
-            raise
+            pass
+        except ZeroDivisionError:
+            # добавить обработчик исключения
+            pass
+
+        # установка знака дроби
+        self.num, self.den = abs(num), abs(den)
+        self.sign = 0 if num == 0 else num/abs(num) * den/abs(den)
+
+        # сокращение дроби
+        self.shorten()
 
     def shorten(self):
         try:
