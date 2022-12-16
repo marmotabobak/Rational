@@ -68,7 +68,12 @@ class Rational:
 
         # установка знака дроби
         self.num, self.den = abs(num), abs(den)
-        self.sign = 0 if num == 0 else num/abs(num) * den/abs(den)
+
+        if num != 0:
+            if num/abs(num) * den/abs(den) > 0:
+                self.positive = True
+            elif num/abs(num) * den/abs(den) < 0:
+                self.positive = False
 
         # сокращение дроби
         self.shorten()
@@ -91,10 +96,11 @@ assert all(get_gcd(x, y) == z for (x, y, z) in gcd_nums), '!WARNING! Некор�
 assert all(get_gcd_recur(x, y) == z for (x, y, z) in gcd_nums), '!WARNING! Некорректная отработка get_gcd_recur()'
 # class Rational
 test_fraction_1 = Rational(-3, 4)
-assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and test_fraction_1.sign == -1, '!WARNING! Некорректная отработка Rational'
+assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and not test_fraction_1.positive, '!WARNING! Некорректная отработка Rational'
 test_fraction_1 = Rational(-0, 4)
-assert test_fraction_1.num == 0 and test_fraction_1.den == 4 and test_fraction_1.sign == 0, '!WARNING! Некорректная отработка Rational'
+assert test_fraction_1.num == 0 and test_fraction_1.den == 4, '!WARNING! Некорректная отработка Rational'
 test_fraction_1 = Rational(3, 4)
-assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and test_fraction_1.sign == 1, '!WARNING! Некорректная отработка Rational'
+assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and test_fraction_1.positive, '!WARNING! Некорректная отработка Rational'
 test_fraction_2 = Rational(18, 36)
-assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2.sign == 1, '!WARNING! Некорректная отработка сокращения дроби в shorten() в Rational'
+assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2.positive, '!WARNING! Некорректная отработка сокращения дроби в shorten() в Rational'
+
