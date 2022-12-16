@@ -50,12 +50,13 @@ class Rational:
         :param den: знаменатель - целове число
         '''
 
+        if den == 0:
+            # добавить обработчик исключения
+            raise ZeroDivisionError('Знаменатель дроби не может быть равен нулю')
+
         try:
             num = int(num)
             den = int(den)
-            if den == 0:
-                # добавить обработчик исключения
-                raise ZeroDivisionError
         except TypeError:
             # добавить обработчик исключения
             pass
@@ -78,6 +79,20 @@ class Rational:
         # сокращение дроби
         self.shorten()
 
+    @property
+    def float(self):
+        return self.sign() * self.num / self.den
+
+    def sign(self):
+        '''
+        Функция определения знака дроби по признаку positive
+        :return: +1 для положительной дроби, -1 для отрицаиельной, 0 для нулевой
+        '''
+        try:
+            return (-1) * (-1) ** self.positive
+        except AttributeError:
+            return 0
+
     def shorten(self):
         try:
             gcd = get_gcd(self.num, self.den)
@@ -94,7 +109,7 @@ class Rational:
 gcd_nums = ((140, 96, 4), (16, 24, 8), (15, 60, 15), (10, 15, 5), (45, 56, 1), (21, 49, 7), (2, 7, 1))
 assert all(get_gcd(x, y) == z for (x, y, z) in gcd_nums), '!WARNING! Некорректная отработка get_gcd()'
 assert all(get_gcd_recur(x, y) == z for (x, y, z) in gcd_nums), '!WARNING! Некорректная отработка get_gcd_recur()'
-# class Rational
+# class Rational: basics
 test_fraction_1 = Rational(-3, 4)
 assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and not test_fraction_1.positive, '!WARNING! Некорректная отработка Rational'
 test_fraction_1 = Rational(-0, 4)
@@ -103,4 +118,7 @@ test_fraction_1 = Rational(3, 4)
 assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and test_fraction_1.positive, '!WARNING! Некорректная отработка Rational'
 test_fraction_2 = Rational(18, 36)
 assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2.positive, '!WARNING! Некорректная отработка сокращения дроби в shorten() в Rational'
+# class Rational: float
+assert Rational(-0, 156).float == 0, '!WARNING! Некорректная отработка float в Rational'
+assert Rational(22, -745).float == -1 * 22 / 745, '!WARNING! Некорректная отработка float в Rational'
 
