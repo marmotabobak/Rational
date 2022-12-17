@@ -110,14 +110,14 @@ class Rational:
             # добавить обработчик исключения
             pass
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         '''
         Строковое представление объекта для отладки
         :return: Строковое значение свойства float
         '''
         return str(self.float)
 
-    def __str__(self):
+    def __repr__(self) -> str:
         '''
         Строковое представление объекта
         :return: Строковое представление: +/-числитель/знаменатель
@@ -284,14 +284,14 @@ except ZeroDivisionError as e:
 assert Rational(-0, 156).float == 0, '!WARNING! Некорректная отработка float в Rational'
 assert Rational(22, -745).float == -1 * 22 / 745, '!WARNING! Некорректная отработка float в Rational'
 # class Rational: __repr_, __str__
-assert repr(Rational(-1, 25)) == str(Rational(1, -25).float), '!WARNING! Некорректная отработка __repr__ в Rational'
-assert str(Rational(1, -25)) == '-1/25', '!WARNING! Некорректная отработка __str__ в Rational'
+assert str(Rational(-1, 25)) == str(Rational(1, -25).float), '!WARNING! Некорректная отработка __str__ в Rational'
+assert repr(Rational(1, -25)) == '-1/25', '!WARNING! Некорректная отработка __repr__ в Rational'
 # class Rational: __add__
 assert repr(Rational(1, 3) + Rational(2, 3)) == repr(Rational(1, 1)), '!WARNING! Некорректная отработка __add__ в Rational'
 assert repr(Rational(1, 3) + Rational(2, -3)) == repr(Rational(-1, 3)), '!WARNING! Некорректная отработка __add__ в Rational'
 assert repr(Rational(2, 7) + Rational(3, 8)) == repr(Rational(37, 56)), '!WARNING! Некорректная отработка __add__ в Rational'
 assert repr(Rational(0, 10) + Rational(-3, 8)) == repr(Rational(3, -8)), '!WARNING! Некорректная отработка __add__ в Rational'
-assert repr(Rational(0, 10) + Rational(-0, 8)) == repr(Rational(0, -8)), '!WARNING! Некорректная отработка __add__ в Rational'
+assert str(Rational(0, 10) + Rational(-0, 8)) == str(Rational(0, -8)), '!WARNING! Некорректная отработка __add__ в Rational'
 assert repr(Rational(1, 10) + 1) == repr(Rational(11, 10)), '!WARNING! Некорректная отработка __add__ с целым цислом в Rational'
 try:
     repr(Rational(1, 10) + (1, 2)) == repr(Rational(11, 10))
@@ -311,7 +311,7 @@ assert repr(1 - Rational(1, 10)) == repr(Rational(9, 10)), '!WARNING! Некор
 assert repr(Rational(1, 3) * Rational(2, -3)) == repr(Rational(-2, 9)), '!WARNING! Некорректная отработка __mul__ в Rational'
 assert repr(Rational(1, 3) * Rational(3, 1)) == repr(Rational(1, 1)), '!WARNING! Некорректная отработка __mul__ в Rational'
 assert repr(Rational(-2, 7) * Rational(3, 8)) == repr(Rational(-6, 56)), '!WARNING! Некорректная отработка __mul__ в Rational'
-assert repr(Rational(0, 777) * Rational(3, 8)) == repr(Rational(0, 56)), '!WARNING! Некорректная отработка __smul__ в Rational'
+assert str(Rational(0, 777) * Rational(3, 8)) == str(Rational(0, 56)), '!WARNING! Некорректная отработка __smul__ в Rational'
 assert repr(Rational(1, 10) * 2) == repr(Rational(1, 5)), '!WARNING! Некорректная отработка __mul__ с целым цислом в Rational'
 try:
     repr(Rational(1, 10) * (1, 2)) == repr(Rational(11, 10))
@@ -331,3 +331,8 @@ try:
     Rational(1, 1) / Rational(0, 1)
 except ZeroDivisionError as e:
     assert str(e) == 'На ноль делить нельзя', '!WARNING! Некорректная отработка исключени деления на ноль в __truediv__ в Rational'
+
+
+rnum_1 = Rational(num=2, den=5)
+rnum_2 = Rational(num=-3, den=7)
+print(repr(rnum_1 + rnum_2), repr(rnum_1 - rnum_2), repr(rnum_1 * rnum_2), repr(rnum_1 / rnum_2))
