@@ -1,4 +1,5 @@
 import yaml
+from sys import argv
 
 class CriticalApplicationError(Exception):
     pass
@@ -64,13 +65,13 @@ class Rational:
             den = int(den)
         except TypeError:
             # добавить обработчик исключения
-            pass
+            raise
         except ValueError:
             # добавить обработчик исключения
-            pass
+            raise
         except ZeroDivisionError:
             # добавить обработчик исключения
-            pass
+            raise
 
         # установка знака дроби
         self.num, self.den = abs(num), abs(den)
@@ -112,9 +113,9 @@ class Rational:
             if gcd > 1:
                 ration.num //= gcd
                 ration.den //= gcd
-        except:
+        except Exception as e:
             # добавить обработчик исключения
-            pass
+            raise
         return ration
 
     def __str__(self) -> str:
@@ -268,14 +269,23 @@ class Rational:
 
         return num1 / num2
 
+if (len(argv) < 2):
+    raise CriticalApplicationError('! CRTITICAL ! Должно быть передано имя файла последним аргументом.')
+else:
+    try:
+        file_name = argv[-1]
+    except Exception as e:
+        # обработать необходимые ошибки
+        raise
+
 try:
-    with open('data.yaml') as file:
+    with open(file_name) as file:
         json_data = yaml.safe_load(file)
 except FileNotFoundError as e:
     raise CriticalApplicationError('! CRITICAL ! Файл не найден. Сервис остановлен.')
 except Exception as e:
     # отработать необходимые исключения
-    pass
+    raise
 
 try:
     json_data
