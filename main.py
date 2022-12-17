@@ -1,4 +1,7 @@
-import json
+import yaml
+
+class CriticalApplicationError(Exception):
+    pass
 
 def get_gcd(num1: int, num2: int) -> int:
     '''
@@ -266,13 +269,18 @@ class Rational:
         return num1 / num2
 
 try:
-    with open('data.json') as file:
-        json_data = json.load(file)
+    with open('data.yaml') as file:
+        json_data = yaml.safe_load(file)
 except FileNotFoundError as e:
-    print('! CRITICAL ! Файл не найден. Сервис остановлен.')
+    raise CriticalApplicationError('! CRITICAL ! Файл не найден. Сервис остановлен.')
 except Exception as e:
     # отработать необходимые исключения
     pass
+
+try:
+    json_data
+except Exception as e:
+    raise CriticalApplicationError('! CRITICAL ! Ошибка в процессе парсинга файла. Сервис остановлен.')
 
 for item in json_data:
     try:
