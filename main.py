@@ -1,3 +1,5 @@
+import json
+
 def get_gcd(num1: int, num2: int) -> int:
     '''
     Функция поиска НОД по Эвклиду
@@ -77,7 +79,7 @@ class Rational:
                 self.positive = False
 
         # сокращение дроби
-        self.shorten()
+        #self.shorten()
 
     @property
     def float(self):
@@ -97,18 +99,20 @@ class Rational:
         except AttributeError:
             return 0
 
-    def shorten(self):
+    @classmethod
+    def shorten(cls, ration):
         '''
         Метод скоращения дроби
         '''
         try:
-            gcd = get_gcd(self.num, self.den)
+            gcd = get_gcd(ration.num, ration.den)
             if gcd > 1:
-                self.num //= gcd
-                self.den //= gcd
+                ration.num //= gcd
+                ration.den //= gcd
         except:
             # добавить обработчик исключения
             pass
+        return ration
 
     def __str__(self) -> str:
         '''
@@ -245,9 +249,9 @@ class Rational:
 
     def __rtruediv__(self, other):
         '''
-        Метод деление дробей
-        :param other: делитель
-        :return: Частное типа Rational
+        Метод деление на дробь Rational
+        :param other: частное
+        :return: Частное от деления
         '''
 
         if type(other) not in (Rational, int):
@@ -261,6 +265,42 @@ class Rational:
 
         return num1 / num2
 
+try:
+    with open('data.json') as file:
+        json_data = json.load(file)
+except FileNotFoundError as e:
+    print('! CRITICAL ! Файл не найден. Сервис остановлен.')
+except Exception as e:
+    # отработать необходимые исключения
+    pass
+
+for item in json_data:
+    try:
+        a = item['a']
+        b = item['b'] if 'b' in item else a
+        oper = item['operation']
+    except KeyError as e:
+        print(f'! WARNING ! Проверьте структуру файла с данными - отсутствуют необходимый ключ: {e}. Элемент пропущен: {item}')
+        continue
+
+    try:
+        if '/' in a:
+            a_num, a_den = (int(x) for x in a.split('/'))
+        else:
+            a_num = int(a)
+            a_den = 1
+        if '/' in b:
+            b_num, b_den= (int(x) for x in b.split('/'))
+        else:
+            b_num = int(b)
+            b_den = 1
+    except ValueError as e:
+        print(f'! WARNING ! Некорректный формат данных (должен быть Rational или int): {e} Элемент пропущен: {item}')
+        continue
+    except Exception as e:
+        raise
+
+    print(f'{a} {oper} {b} =', eval(f'repr(Rational({a_num}, {a_den}) {oper} Rational({b_num}, {b_den}))'))
 
 # ----- ASSERT ------
 # get_gcd()
@@ -275,6 +315,7 @@ assert test_fraction_1.num == 0 and test_fraction_1.den == 4, '!WARNING! Нек�
 test_fraction_1 = Rational(3, 4)
 assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and test_fraction_1.positive, '!WARNING! Некорректная отработка Rational'
 test_fraction_2 = Rational(18, 36)
+test_fraction_2 = Rational.shorten(test_fraction_2)
 assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2.positive, '!WARNING! Некорректная отработка сокращения дроби в shorten() в Rational'
 try:
     Rational(1, 0)
@@ -287,10 +328,10 @@ assert Rational(22, -745).float == -1 * 22 / 745, '!WARNING! Некоррект�
 assert str(Rational(-1, 25)) == str(Rational(1, -25).float), '!WARNING! Некорректная отработка __str__ в Rational'
 assert repr(Rational(1, -25)) == '-1/25', '!WARNING! Некорректная отработка __repr__ в Rational'
 # class Rational: __add__
-assert repr(Rational(1, 3) + Rational(2, 3)) == repr(Rational(1, 1)), '!WARNING! Некорректная отработка __add__ в Rational'
-assert repr(Rational(1, 3) + Rational(2, -3)) == repr(Rational(-1, 3)), '!WARNING! Некорректная отработка __add__ в Rational'
-assert repr(Rational(2, 7) + Rational(3, 8)) == repr(Rational(37, 56)), '!WARNING! Некорректная отработка __add__ в Rational'
-assert repr(Rational(0, 10) + Rational(-3, 8)) == repr(Rational(3, -8)), '!WARNING! Некорректная отработка __add__ в Rational'
+assert str(Rational(1, 3) + Rational(2, 3)) == str(Rational(1, 1)), '!WARNING! Некорректная отработка __add__ в Rational'
+assert str(Rational(1, 3) + Rational(2, -3)) == str(Rational(-1, 3)), '!WARNING! Некорректная отработка __add__ в Rational'
+assert str(Rational(2, 7) + Rational(3, 8)) == str(Rational(37, 56)), '!WARNING! Некорректная отработка __add__ в Rational'
+assert str(Rational(0, 10) + Rational(-3, 8)) == str(Rational(3, -8)), '!WARNING! Некорректная отработка __add__ в Rational'
 assert str(Rational(0, 10) + Rational(-0, 8)) == str(Rational(0, -8)), '!WARNING! Некорректная отработка __add__ в Rational'
 assert repr(Rational(1, 10) + 1) == repr(Rational(11, 10)), '!WARNING! Некорректная отработка __add__ с целым цислом в Rational'
 try:
@@ -298,21 +339,21 @@ try:
 except ArithmeticError as e:
     assert str(e) == 'Операции типа Rational можно проводить только с дробями типа Rational или целыми числами', '!WARNING! Некорректная отработка исклюячений __add__ в Rational'
 assert repr(1 + Rational(1, 10)) == repr(Rational(11, 10)), '!WARNING! Некорректная отработка __radd__ с целым цислом в Rational'
-assert repr(Rational(0, 1000) + Rational(1, 5555)) == repr(Rational(1, 5555)), '!WARNING! Некорректная отработка __sub__ в Rational'
-assert repr(Rational(1, 3) - Rational(2, -3)) == repr(Rational(1, 1)), '!WARNING! Некорректная отработка __sub__ в Rational'
-assert repr(Rational(1, 3) - Rational(2, 3)) == repr(Rational(-1, 3)), '!WARNING! Некорректная отработка __sub__ в Rational'
-assert repr(Rational(-2, 7) - Rational(3, 8)) == repr(Rational(-37, 56)), '!WARNING! Некорректная отработка __sub__ в Rational'
-assert repr(Rational(1, 10) - 1) == repr(Rational(-9, 10)), '!WARNING! Некорректная отработка __sub__ с целым цислом в Rational'
+assert str(Rational(0, 1000) + Rational(1, 5555)) == str(Rational(1, 5555)), '!WARNING! Некорректная отработка __sub__ в Rational'
+assert str(Rational(1, 3) - Rational(2, -3)) == str(Rational(1, 1)), '!WARNING! Некорректная отработка __sub__ в Rational'
+assert str(Rational(1, 3) - Rational(2, 3)) == str(Rational(-1, 3)), '!WARNING! Некорректная отработка __sub__ в Rational'
+assert str(Rational(-2, 7) - Rational(3, 8)) == str(Rational(-37, 56)), '!WARNING! Некорректная отработка __sub__ в Rational'
+assert str(Rational(1, 10) - 1) == str(Rational(-9, 10)), '!WARNING! Некорректная отработка __sub__ с целым цислом в Rational'
 try:
     repr(Rational(1, 10) - (1, 2)) == repr(Rational(11, 10))
 except ArithmeticError as e:
     assert str(e) == 'Операции типа Rational можно проводить только с дробями типа Rational или целыми числами', '!WARNING! Некорректная отработка исклюячений __sub__ в Rational'
 assert repr(1 - Rational(1, 10)) == repr(Rational(9, 10)), '!WARNING! Некорректная отработка __rsub__ с целым цислом в Rational'
 assert repr(Rational(1, 3) * Rational(2, -3)) == repr(Rational(-2, 9)), '!WARNING! Некорректная отработка __mul__ в Rational'
-assert repr(Rational(1, 3) * Rational(3, 1)) == repr(Rational(1, 1)), '!WARNING! Некорректная отработка __mul__ в Rational'
-assert repr(Rational(-2, 7) * Rational(3, 8)) == repr(Rational(-6, 56)), '!WARNING! Некорректная отработка __mul__ в Rational'
+assert str(Rational(1, 3) * Rational(3, 1)) == str(Rational(1, 1)), '!WARNING! Некорректная отработка __mul__ в Rational'
+assert str(Rational(-2, 7) * Rational(3, 8)) == str(Rational(-6, 56)), '!WARNING! Некорректная отработка __mul__ в Rational'
 assert str(Rational(0, 777) * Rational(3, 8)) == str(Rational(0, 56)), '!WARNING! Некорректная отработка __smul__ в Rational'
-assert repr(Rational(1, 10) * 2) == repr(Rational(1, 5)), '!WARNING! Некорректная отработка __mul__ с целым цислом в Rational'
+assert str(Rational(1, 10) * 2) == str(Rational(1, 5)), '!WARNING! Некорректная отработка __mul__ с целым цислом в Rational'
 try:
     repr(Rational(1, 10) * (1, 2)) == repr(Rational(11, 10))
 except ArithmeticError as e:
@@ -331,8 +372,3 @@ try:
     Rational(1, 1) / Rational(0, 1)
 except ZeroDivisionError as e:
     assert str(e) == 'На ноль делить нельзя', '!WARNING! Некорректная отработка исключени деления на ноль в __truediv__ в Rational'
-
-
-rnum_1 = Rational(num=2, den=5)
-rnum_2 = Rational(num=-3, den=7)
-print(repr(rnum_1 + rnum_2), repr(rnum_1 - rnum_2), repr(rnum_1 * rnum_2), repr(rnum_1 / rnum_2))
