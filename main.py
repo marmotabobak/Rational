@@ -110,10 +110,18 @@ class Rational:
             # добавить обработчик исключения
             pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        '''
+        Строковое представление объекта для отладки
+        :return: Строковое значение свойства float
+        '''
         return str(self.float)
 
     def __str__(self):
+        '''
+        Строковое представление объекта
+        :return: Строковое представление: +/-числитель/знаменатель
+        '''
         num = self.sign() *self.num
         return f'{num}/{self.den}'
 
@@ -136,6 +144,6 @@ assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2
 assert Rational(-0, 156).float == 0, '!WARNING! Некорректная отработка float в Rational'
 assert Rational(22, -745).float == -1 * 22 / 745, '!WARNING! Некорректная отработка float в Rational'
 # class Rational: __repr_, __str__
-assert repr(Rational(-1, 25)) == str(Rational(1, -25).float)
-assert str(Rational(1, -25)) == '-1/25'
+assert repr(Rational(-1, 25)) == str(Rational(1, -25).float), '!WARNING! Некорректная отработка __str__ в Rational'
+assert str(Rational(1, -25)) == '-1/25', '!WARNING! Некорректная отработка __repr__ в Rational'
 
