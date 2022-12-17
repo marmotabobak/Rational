@@ -81,12 +81,16 @@ class Rational:
 
     @property
     def float(self):
+        '''
+        Возвращает float представление дроби
+        :return: частное числителя на знаменатель, умноженное на знак дроби
+        '''
         return self.sign() * self.num / self.den
 
     def sign(self):
         '''
         Функция определения знака дроби по признаку positive
-        :return: +1 для положительной дроби, -1 для отрицаиельной, 0 для нулевой
+        :return: +1 для положительной дроби, -1 для отрицательной, 0 для нулевой
         '''
         try:
             return (-1) * (-1) ** self.positive
@@ -94,6 +98,9 @@ class Rational:
             return 0
 
     def shorten(self):
+        '''
+        Метод скоращения дроби
+        '''
         try:
             gcd = get_gcd(self.num, self.den)
             if gcd > 1:
@@ -102,6 +109,13 @@ class Rational:
         except:
             # добавить обработчик исключения
             pass
+
+    def __repr__(self):
+        return str(self.float)
+
+    def __str__(self):
+        num = self.sign() *self.num
+        return f'{num}/{self.den}'
 
 
 # ----- ASSERT ------
@@ -121,4 +135,7 @@ assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2
 # class Rational: float
 assert Rational(-0, 156).float == 0, '!WARNING! Некорректная отработка float в Rational'
 assert Rational(22, -745).float == -1 * 22 / 745, '!WARNING! Некорректная отработка float в Rational'
+# class Rational: __repr_, __str__
+assert repr(Rational(-1, 25)) == str(Rational(1, -25).float)
+assert str(Rational(1, -25)) == '-1/25'
 
