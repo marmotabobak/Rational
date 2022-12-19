@@ -282,7 +282,7 @@ try:
     with open(file_name) as file:
         json_data = yaml.safe_load(file)
 except FileNotFoundError as e:
-    raise CriticalApplicationError('! CRITICAL ! Файл не найден. Сервис остановлен.')
+    raise CriticalApplicationError('! CRITICAL ! Файл не найден. Сервис остановлен.') from None
 except Exception as e:
     # отработать необходимые исключения
     raise
