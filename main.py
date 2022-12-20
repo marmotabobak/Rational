@@ -261,6 +261,40 @@ class Rational:
 
         return num1 / num2
 
+    def __eq__(self, other):
+
+        other = self.__int_to_rational(other)
+
+        return (self.num, self.den, self.positive) == (other.num, other.den, other.positive)
+
+    def __gt__(self, other):
+
+        other = self.__int_to_rational(other)
+
+        if self.sign() > other.sign():
+            return True
+        elif self.sign() < other.sign():
+            return False
+        else:
+            if self.positive:
+                return self.num * other.den > other.num * self.den
+            else:
+                return self.num * other.den < other.num * self.den
+
+    def __ge__(self, other):
+
+        other = self.__int_to_rational(other)
+
+        if self.sign() > other.sign():
+            return True
+        elif self.sign() < other.sign():
+            return False
+        else:
+            if self.positive:
+                return self.num * other.den >= other.num * self.den
+            else:
+                return self.num * other.den <= other.num * self.den
+
 if (len(argv) < 2):
     raise CriticalApplicationError('! CRTITICAL ! Должно быть передано имя файла последним аргументом.')
 else:
@@ -337,7 +371,7 @@ assert Rational(22, -745).float == -1 * 22 / 745, '!WARNING! Некоррект�
 # class Rational: __repr_, __str__
 assert str(Rational(-1, 25)) == str(Rational(1, -25).float), '!WARNING! Некорректная отработка __str__ в Rational'
 assert repr(Rational(1, -25)) == '-1/25', '!WARNING! Некорректная отработка __repr__ в Rational'
-# class Rational: __add__
+# class Rational: dunders
 assert str(Rational(1, 3) + Rational(2, 3)) == str(Rational(1, 1)), '!WARNING! Некорректная отработка __add__ в Rational'
 assert str(Rational(1, 3) + Rational(2, -3)) == str(Rational(-1, 3)), '!WARNING! Некорректная отработка __add__ в Rational'
 assert str(Rational(2, 7) + Rational(3, 8)) == str(Rational(37, 56)), '!WARNING! Некорректная отработка __add__ в Rational'
@@ -382,4 +416,16 @@ try:
     Rational(1, 1) / Rational(0, 1)
 except ZeroDivisionError as e:
     assert str(e) == 'На ноль делить нельзя', '!WARNING! Некорректная отработка исключени деления на ноль в __truediv__ в Rational'
+assert Rational(-1, 2) == Rational(4, -8), '!WARNING! Некорректная отработка __eq__ в Rational'
+assert Rational(-2, 2) == -1, '!WARNING! Некорректная отработка __eq__ в Rational'
+assert Rational(0, 2) == Rational(0, -100), '!WARNING! Некорректная отработка __eq__ в Rational'
+assert Rational(1, 2) != Rational(-1, 2), '!WARNING! Некорректная отработка __eq__ в Rational'
+assert Rational(1, 2) > Rational(1, 4), '!WARNING! Некорректная отработка __gt__ в Rational'
+assert Rational(-1, 2) < Rational(1, -4), '!WARNING! Некорректная отработка __gt__ в Rational'
+assert Rational(-1, 2) < Rational(0, 1), '!WARNING! Некорректная отработка __gt__ в Rational'
+assert Rational(1, 2) >= Rational(0, 1), '!WARNING! Некорректная отработка __ge__ в Rational'
+assert Rational(1, -2) <= Rational(0, 1), '!WARNING! Некорректная отработка __ge__ в Rational'
+assert Rational(-1, 2) >= Rational(-10, 3), '!WARNING! Некорректная отработка __ge__ в Rational'
+assert Rational(-1, 2) <= Rational(1, -2), '!WARNING! Некорректная отработка __ge__ в Rational'
+assert Rational(-1, -2) >= Rational(2, 4), '!WARNING! Некорректная отработка __ge__ в Rational'
 
