@@ -104,7 +104,6 @@ class Rational:
         except AttributeError:
             return 0
 
-    #@classmethod
     def shorten(self):
         '''
         Метод скоращения дроби
@@ -138,6 +137,18 @@ class Rational:
         num = self.sign() *self.num
         return f'{num}/{self.den}'
 
+    @classmethod
+    def __int_to_rational(cls, other):
+        '''
+        Метод приведения int к Rational
+        :param other:
+        :return:
+        '''
+        if type(other) not in (Rational, int):
+            raise TypeError('Операции типа Rational можно проводить только с дробями типа Rational или целыми числами')
+
+        return Rational(other, 1) if isinstance(other, int) else other
+
     def __add__(self, other):
         '''
         Метод сложения для дробей
@@ -145,11 +156,7 @@ class Rational:
         :return: Сумма типа Rational
         '''
 
-        if type(other) not in (Rational, int):
-            raise ArithmeticError('Операции типа Rational можно проводить только с дробями типа Rational или целыми числами')
-
-        if isinstance(other, int):
-            other = Rational(other, 1)
+        other = self.__int_to_rational(other)
 
         # вычисление числителя
         num = self.sign() * self.num * other.den + other.sign() * other.num * self.den
@@ -174,11 +181,7 @@ class Rational:
         :return: Разность типа Rational
         '''
 
-        if type(other) not in (Rational, int):
-            raise ArithmeticError('Операции типа Rational можно проводить только с дробями типа Rational или целыми числами')
-
-        if isinstance(other, int):
-            other = Rational(other, 1)
+        other = self.__int_to_rational(other)
 
         # вычисление числителя
         num = self.sign() * self.num * other.den + (-1) * other.sign() * other.num * self.den
@@ -194,11 +197,7 @@ class Rational:
         :return: Разность
         '''
 
-        if type(other) not in (Rational, int):
-            raise ArithmeticError('Операции типа Rational можно проводить только с дробями типа Rational или целыми числами')
-
-        if isinstance(other, int):
-            other = Rational(other, 1)
+        other = self.__int_to_rational(other)
 
         num1 = other
         num2 = self
@@ -212,11 +211,7 @@ class Rational:
         :return: Произведение типа Rational
         '''
 
-        if type(other) not in (Rational, int):
-            raise ArithmeticError('Операции типа Rational можно проводить только с дробями типа Rational или целыми числами')
-
-        if isinstance(other, int):
-            other = Rational(other, 1)
+        other = self.__int_to_rational(other)
 
         # вычисление числителя
         num = self.sign() * other.sign() * self.num * other.num
@@ -240,11 +235,7 @@ class Rational:
         :return: Частное типа Rational
         '''
 
-        if type(other) not in (Rational, int):
-            raise ArithmeticError('Операции типа Rational можно проводить только с дробями типа Rational или целыми числами')
-
-        if isinstance(other, int):
-            other = Rational(other, 1)
+        other = self.__int_to_rational(other)
 
         if other.num == 0:
             raise ZeroDivisionError('На ноль делить нельзя')
@@ -263,11 +254,7 @@ class Rational:
         :return: Частное от деления
         '''
 
-        if type(other) not in (Rational, int):
-            raise ArithmeticError('Операции типа Rational можно проводить только с дробями типа Rational или целыми числами')
-
-        if isinstance(other, int):
-            other = Rational(other, 1)
+        other = self.__int_to_rational(other)
 
         num1 = other
         num2 = self
@@ -359,7 +346,7 @@ assert str(Rational(0, 10) + Rational(-0, 8)) == str(Rational(0, -8)), '!WARNING
 assert repr(Rational(1, 10) + 1) == repr(Rational(11, 10)), '!WARNING! Некорректная отработка __add__ с целым цислом в Rational'
 try:
     repr(Rational(1, 10) + (1, 2)) == repr(Rational(11, 10))
-except ArithmeticError as e:
+except TypeError as e:
     assert str(e) == 'Операции типа Rational можно проводить только с дробями типа Rational или целыми числами', '!WARNING! Некорректная отработка исклюячений __add__ в Rational'
 assert repr(1 + Rational(1, 10)) == repr(Rational(11, 10)), '!WARNING! Некорректная отработка __radd__ с целым цислом в Rational'
 assert str(Rational(0, 1000) + Rational(1, 5555)) == str(Rational(1, 5555)), '!WARNING! Некорректная отработка __sub__ в Rational'
@@ -369,7 +356,7 @@ assert str(Rational(-2, 7) - Rational(3, 8)) == str(Rational(-37, 56)), '!WARNIN
 assert str(Rational(1, 10) - 1) == str(Rational(-9, 10)), '!WARNING! Некорректная отработка __sub__ с целым цислом в Rational'
 try:
     repr(Rational(1, 10) - (1, 2)) == repr(Rational(11, 10))
-except ArithmeticError as e:
+except TypeError as e:
     assert str(e) == 'Операции типа Rational можно проводить только с дробями типа Rational или целыми числами', '!WARNING! Некорректная отработка исклюячений __sub__ в Rational'
 assert repr(1 - Rational(1, 10)) == repr(Rational(9, 10)), '!WARNING! Некорректная отработка __rsub__ с целым цислом в Rational'
 assert repr(Rational(1, 3) * Rational(2, -3)) == repr(Rational(-2, 9)), '!WARNING! Некорректная отработка __mul__ в Rational'
@@ -379,7 +366,7 @@ assert str(Rational(0, 777) * Rational(3, 8)) == str(Rational(0, 56)), '!WARNING
 assert str(Rational(1, 10) * 2) == str(Rational(1, 5)), '!WARNING! Некорректная отработка __mul__ с целым цислом в Rational'
 try:
     repr(Rational(1, 10) * (1, 2)) == repr(Rational(11, 10))
-except ArithmeticError as e:
+except TypeError as e:
     assert str(e) == 'Операции типа Rational можно проводить только с дробями типа Rational или целыми числами', '!WARNING! Некорректная отработка исклюячений __mul__ в Rational'
 assert repr(0 * Rational(1, 10)) == repr(Rational(0, 10)), '!WARNING! Некорректная отработка __rmul__ с целым цислом в Rational'
 assert repr(Rational(1, 3) / Rational(2, -3)) == repr(Rational(-3, 6)), '!WARNING! Некорректная отработка __truediv__ в Rational'
@@ -388,10 +375,11 @@ assert repr(Rational(-2, 7) / Rational(3, 8)) == repr(Rational(16, -21)), '!WARN
 assert repr(Rational(1, 10) / 2) == repr(Rational(1, 20)), '!WARNING! Некорректная отработка __truediv__ с целым цислом в Rational'
 try:
     repr(Rational(1, 10) / (1, 2)) == repr(Rational(11, 10))
-except ArithmeticError as e:
+except TypeError as e:
     assert str(e) == 'Операции типа Rational можно проводить только с дробями типа Rational или целыми числами', '!WARNING! Некорректная отработка исклюячений __truediv__ в Rational'
 assert repr(1 / Rational(1, 10)) == repr(Rational(10, 1)), '!WARNING! Некорректная отработка __rtruediv__ с целым цислом в Rational'
 try:
     Rational(1, 1) / Rational(0, 1)
 except ZeroDivisionError as e:
     assert str(e) == 'На ноль делить нельзя', '!WARNING! Некорректная отработка исключени деления на ноль в __truediv__ в Rational'
+
