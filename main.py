@@ -83,7 +83,7 @@ class Rational:
                 self.positive = False
 
         # сокращение дроби
-        #self.shorten()
+        self.shorten()
 
     @property
     def float(self):
@@ -103,20 +103,24 @@ class Rational:
         except AttributeError:
             return 0
 
-    @classmethod
-    def shorten(cls, ration):
+    #@classmethod
+    def shorten(self):
         '''
         Метод скоращения дроби
         '''
+        if self.num == 0:
+            self. positive = True
+            self.den = 1
+            return self
         try:
-            gcd = get_gcd(ration.num, ration.den)
+            gcd = get_gcd(self.num, self.den)
             if gcd > 1:
-                ration.num //= gcd
-                ration.den //= gcd
+                self.num //= gcd
+                self.den //= gcd
         except Exception as e:
             # добавить обработчик исключения
             raise
-        return ration
+        return self
 
     def __str__(self) -> str:
         '''
@@ -329,11 +333,11 @@ assert all(get_gcd_recur(x, y) == z for (x, y, z) in gcd_nums), '!WARNING! Не�
 test_fraction_1 = Rational(-3, 4)
 assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and not test_fraction_1.positive, '!WARNING! Некорректная отработка Rational'
 test_fraction_1 = Rational(-0, 4)
-assert test_fraction_1.num == 0 and test_fraction_1.den == 4, '!WARNING! Некорректная отработка Rational'
+assert test_fraction_1.num == 0 and test_fraction_1.den == 1, '!WARNING! Некорректная отработка Rational'
 test_fraction_1 = Rational(3, 4)
 assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and test_fraction_1.positive, '!WARNING! Некорректная отработка Rational'
 test_fraction_2 = Rational(18, 36)
-test_fraction_2 = Rational.shorten(test_fraction_2)
+test_fraction_2.shorten()
 assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2.positive, '!WARNING! Некорректная отработка сокращения дроби в shorten() в Rational'
 try:
     Rational(1, 0)
