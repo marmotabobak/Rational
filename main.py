@@ -63,9 +63,13 @@ class Rational:
                 self.positive = True
             elif num/abs(num) * den/abs(den) < 0:
                 self.positive = False
+            else:
+                pass
+        else:
+            self.positive = True
 
         # сокращение дроби
-        self.shorten()
+        #self.shorten()
 
     @property
     def float(self):
@@ -295,6 +299,37 @@ class Rational:
             else:
                 return self.num * other.den <= other.num * self.den
 
+    def __setattr__(self, key, value):
+
+        if key == 'den' and value == 0:
+            raise ZeroDivisionError('Знаменатель не может быть равен 0')
+
+        if (key == 'num' and value == 0) or (key != 'num' and self.num == 0):
+        #    object.__setattr__(self, 'den', 1)
+        #    object.__setattr__(self, 'positive', True)
+            object.__setattr__(self, 'num', 0)
+            object.__setattr__(self, 'den', 1)
+            object.__setattr__(self, 'positive', True)
+        elif 'num' in self.__dict__ and 'den' in self.__dict__:
+            if key == 'positive':
+                object.__setattr__(self, 'positive', value)
+            num = self.num
+            den = self.den
+            try:
+                gcd = Rational.get_gcd_recur(num, den)
+                if gcd > 1:
+                    num //= gcd
+                    den //= gcd
+                object.__setattr__(self, 'num', num)
+                object.__setattr__(self, 'den', den)
+            except Exception as e:
+                # добавить обработчик исключения
+                raise
+        else:
+            object.__setattr__(self, key, value)
+
+        #self.shorten()
+
 if (len(argv) < 2):
     raise CriticalApplicationError('! CRTITICAL ! Должно быть передано имя файла последним аргументом.')
 else:
@@ -358,9 +393,6 @@ test_fraction_1 = Rational(-0, 4)
 assert test_fraction_1.num == 0 and test_fraction_1.den == 1, '!WARNING! Некорректная отработка Rational'
 test_fraction_1 = Rational(3, 4)
 assert test_fraction_1.num == 3 and test_fraction_1.den == 4 and test_fraction_1.positive, '!WARNING! Некорректная отработка Rational'
-test_fraction_2 = Rational(18, 36)
-test_fraction_2.shorten()
-assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2.positive, '!WARNING! Некорректная отработка сокращения дроби в shorten() в Rational'
 try:
     Rational(1, 0)
 except ZeroDivisionError as e:
@@ -428,5 +460,9 @@ assert Rational(1, -2) <= Rational(0, 1), '!WARNING! Некорректная о
 assert Rational(-1, 2) >= Rational(-10, 3), '!WARNING! Некорректная отработка __ge__ в Rational'
 assert Rational(-1, 2) <= Rational(1, -2), '!WARNING! Некорректная отработка __ge__ в Rational'
 assert Rational(-1, -2) >= Rational(2, 4), '!WARNING! Некорректная отработка __ge__ в Rational'
-
-# test comment fot git
+test_fraction_2 = Rational(18, 36)
+assert test_fraction_2.num == 1 and test_fraction_2.den == 2 and test_fraction_2.positive, '!WARNING! Некорректная отработка сокращения дроби в __setattr__ в Rational'
+try:
+    test_fraction_2 = Rational(18, 0)
+except ZeroDivisionError as e:
+    assert str(e) == 'Знаменатель дроби не может быть равен нулю', '!WARNING! Некорректная отработка исключения нулевого знаменателя в Rational'
