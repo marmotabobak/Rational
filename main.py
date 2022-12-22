@@ -301,20 +301,22 @@ class Rational:
 
     def __setattr__(self, key, value):
 
+        # Проверка на ноль в знаменателе
         if key == 'den' and value == 0:
             raise ZeroDivisionError('Знаменатель не может быть равен 0')
 
+        # Если устанавливается ноль в числителе либо уже установлен, то установить 0/1
         if (key == 'num' and value == 0) or (key != 'num' and self.num == 0):
-        #    object.__setattr__(self, 'den', 1)
-        #    object.__setattr__(self, 'positive', True)
             object.__setattr__(self, 'num', 0)
             object.__setattr__(self, 'den', 1)
             object.__setattr__(self, 'positive', True)
-        elif 'num' in self.__dict__ and 'den' in self.__dict__:
-            if key == 'positive':
-                object.__setattr__(self, 'positive', value)
-            num = self.num
-            den = self.den
+        # иначе, если это операция по установке знака, то установить знак
+        elif key == 'positive':
+            object.__setattr__(self, key, value)
+        # иначе, если это операция по  изменению числителя или знаменателя, то сократить и изменить
+        elif ('num' in self.__dict__ and key == 'den') or (key == 'num' and 'den' in self.__dict__):
+            num = self.num if 'num' in self.__dict__ else value
+            den = self.den if 'den' in self.__dict__ else value
             try:
                 gcd = Rational.get_gcd_recur(num, den)
                 if gcd > 1:
@@ -325,6 +327,7 @@ class Rational:
             except Exception as e:
                 # добавить обработчик исключения
                 raise
+        # иначе установить параметр - на момент комментария, единственный возможный кейс в данном случае - первоначальная инициализация с установкой int без установленного den
         else:
             object.__setattr__(self, key, value)
 
