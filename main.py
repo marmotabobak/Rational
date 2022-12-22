@@ -429,3 +429,4 @@ assert Rational(-1, 2) >= Rational(-10, 3), '!WARNING! Некорректная 
 assert Rational(-1, 2) <= Rational(1, -2), '!WARNING! Некорректная отработка __ge__ в Rational'
 assert Rational(-1, -2) >= Rational(2, 4), '!WARNING! Некорректная отработка __ge__ в Rational'
 
+# test comment fot git
